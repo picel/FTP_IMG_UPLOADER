@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: ssafy_image_uploader
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+server:
+  port: 2000
+
+logging:
+  level:
+    root: INFO
+    com:
+      ssafy: DEBUG
