@@ -3,40 +3,23 @@ package com.ssafy.image_uploader.util;
 import java.io.ByteArrayInputStream;
 
 import org.apache.commons.net.ftp.FTPClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.ssafy.image_uploader.config.FTPSecretConfig;
 
 @Component
 public class FTPUtil {
 
-  private static FTPUtil instance = new FTPUtil();
-  private FTPClient ftpClient;
+  private FTPClient ftpClient = new FTPClient();
 
-  private String host = "";
-  private int port = 0;
-  private String username = "";
-  private String password = "";
-  private String basePath = "";
-  private String url = "";
-
-  private FTPUtil() {
-    ftpClient = new FTPClient();
-    try {
-      ftpClient.connect(host, port);
-      ftpClient.login(username, password);
-      ftpClient.enterLocalPassiveMode();
-      ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
-  public static FTPUtil getInstance() {
-    return instance;
-  }
+  @Autowired
+  private FTPSecretConfig ftpSecretConfig;
 
   public String uploadFile(byte[] image, String fileName) {
     try {
-      boolean res = ftpClient.storeFile(basePath + "/" + fileName, new ByteArrayInputStream(image));
+      boolean res = ftpClient.storeFile(ftpSecretConfig.getBasePath()
+          + "/" + fileName, new ByteArrayInputStream(image));
       if (!res) {
         return null;
       }
@@ -44,6 +27,8 @@ public class FTPUtil {
       e.printStackTrace();
       return null;
     }
-    return url + basePath + "/" + fileName;
+    return ftpSecretConfig.getUrl()
+        + ftpSecretConfig.getBasePath()
+        + "/" + fileName;
   }
 }
